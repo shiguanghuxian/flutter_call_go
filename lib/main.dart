@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_call_go/dart_lib/dart_lib.dart';
 import 'package:flutter_call_go/home_page.dart';
 
 void main() {
+  initializeDartApi();
   runApp(const MyApp());
 }
 

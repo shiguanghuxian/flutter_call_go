@@ -1,4 +1,6 @@
 import 'dart:developer';
+import 'dart:ffi';
+import 'dart:isolate';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_call_go/dart_lib/dart_lib.dart';
@@ -26,6 +28,26 @@ class _HomePageState extends State<HomePage> {
     FToast.toast(context, msg: "同步调用结果：$valStr");
   }
 
+  late ReceivePort interactiveCppRequests;
+  // go异步回调
+  void goAsynchronousCallback() async {
+    interactiveCppRequests = ReceivePort()
+      ..listen((data) {
+        _handlerMessage(data);
+      });
+    log('开始回调');
+    final int nativePort = interactiveCppRequests.sendPort.nativePort;
+    CallGo.setCallback(nativePort);
+  }
+
+  void _handlerMessage(dynamic data) {
+    log('收到异步回调 -> $data');
+  }
+
+  void stopGoAsynchronousCallback() {
+     CallGo.stopCallback();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,6 +73,24 @@ class _HomePageState extends State<HomePage> {
                 width: MediaQuery.of(context).size.width * 80 / 100,
                 child: const Center(
                   child: Text('异步调用'),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: goAsynchronousCallback,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 80 / 100,
+                child: const Center(
+                  child: Text('GO异步回调'),
+                ),
+              ),
+            ),
+            TextButton(
+              onPressed: stopGoAsynchronousCallback,
+              child: SizedBox(
+                width: MediaQuery.of(context).size.width * 80 / 100,
+                child: const Center(
+                  child: Text('停止GO异步回调'),
                 ),
               ),
             ),

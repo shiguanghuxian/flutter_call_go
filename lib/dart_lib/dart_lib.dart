@@ -44,6 +44,17 @@ AsynchronousCallFunc goAsynchronousCall = lib
         'AsynchronousCall')
     .asFunction();
 
+// 注册异步go回调
+typedef SetCallbackType = Void Function(Int64 port);
+typedef SetCallbackFunc = void Function(int port);
+SetCallbackFunc goSetCallback =
+    lib.lookup<NativeFunction<SetCallbackType>>("SetCallback").asFunction();
+
+// 停止异步回调
+typedef StopCallbackFunc = void Function();
+StopCallbackFunc goStopCallback =
+    lib.lookup<NativeFunction<Void Function()>>('StopCallback').asFunction();
+
 class CallGo {
   // 同步调用
   static String synchronousCall(String param1, int param2) {
@@ -64,5 +75,15 @@ class CallGo {
       'param2': param2,
     });
     return result;
+  }
+
+  // 设置go异步回调
+  static setCallback(int nativePort) {
+    goSetCallback(nativePort);
+  }
+
+  // 停止go异步回调
+  static stopCallback() {
+    goStopCallback();
   }
 }
