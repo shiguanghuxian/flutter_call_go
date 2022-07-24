@@ -88,6 +88,9 @@ func SetCallback(port int64) {
 //export StopCallback
 func StopCallback() {
 	log.Println("停止回调任务")
+	if isStop {
+		return
+	}
 	stopChan <- true
 }
 
